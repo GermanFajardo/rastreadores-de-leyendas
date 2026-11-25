@@ -38,7 +38,7 @@ const SpriteManager = {
           checkDone();
         };
 
-        img.src = 'sprites/' + name + '.png?v=4';
+        img.src = 'sprites/' + name + '.png?v=5';
       });
 
       ObjectSprites.loadAll(checkDone);
@@ -85,15 +85,13 @@ const SpriteManager = {
     let sw = cellW;
     let sh = cellH;
 
-    // Para Don Rigoberto y Lucía en el mapa:
-    // La Fila 0 en rigoberto.png se extiende hasta y = 430 (botas y base de cantina lechera llegan hasta y = 428).
-    // Tomar sh = 430 desde sy = 0 asegura que se dibuje el 100% de la celda de cabeza a pies sin recortar botas ni cantina.
+    // Para Don Rigoberto y Lucía en el mapa (proporcional a cellH):
     if (name === 'rigoberto' && row === 0) {
       sy = 0;
-      sh = 430;
+      sh = Math.min(img.height, Math.round(cellH * (430 / 384)));
     } else if (name === 'lucia' && row === 0) {
       sy = 0;
-      sh = 415;
+      sh = Math.min(img.height, Math.round(cellH * (415 / 384)));
     }
 
     let charScale = scale;
@@ -141,14 +139,15 @@ const SpriteManager = {
     let sh = cellH;
 
     // Para sprites con margen lateral transparente ancho (rigoberto y lucia)
-    // recortar sw centrado para que su altura no quede reducida en avatares circulares
+    // recortar sw centrado proporcionalmente para que su altura no quede reducida en avatares circulares
     if (name === 'rigoberto' || name === 'lucia') {
-      const charWidth = 344;
+      const charWidth = Math.round(cellW * 0.5);
       sx += (cellW - charWidth) / 2;
       sw = charWidth;
       if (row === 0) {
         sy = 0;
-        sh = (name === 'rigoberto') ? 430 : 415;
+        const factor = (name === 'rigoberto') ? (430 / 384) : (415 / 384);
+        sh = Math.min(img.height, Math.round(cellH * factor));
       }
     }
 
@@ -224,7 +223,7 @@ const ObjectSprites = {
         console.error('Error loading tile sprite:', name, err);
         if (onItemDone) onItemDone();
       };
-      img.src = 'sprites/Objetos/' + name + '.png?v=3';
+      img.src = 'sprites/Objetos/' + name + '.png?v=4';
     });
 
     this.objects.forEach((name) => {
@@ -237,7 +236,7 @@ const ObjectSprites = {
         console.error('Error loading object sprite:', name, err);
         if (onItemDone) onItemDone();
       };
-      img.src = 'sprites/Objetos/' + name + '.png?v=3';
+      img.src = 'sprites/Objetos/' + name + '.png?v=4';
     });
   },
 

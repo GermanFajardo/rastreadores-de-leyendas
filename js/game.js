@@ -1705,31 +1705,33 @@ class GameEngine {
 // Global initialization
 let game = null;
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const loadingStatus = document.getElementById('loadingStatus');
-  if (loadingStatus) loadingStatus.textContent = 'Cargando personajes y escenarios de San Miguel...';
-
-  await SpriteManager.loadAll((loaded, total) => {
-    if (loadingStatus) loadingStatus.textContent = `Cargando personajes (${loaded}/${total})...`;
-  });
-
-  if (loadingStatus) loadingStatus.textContent = '¡Todo listo para rastrear!';
-
-  const tomasPrev = document.getElementById('previewTomasCanvas');
-  if (tomasPrev) {
-    SpriteManager.drawFullCharacter(tomasPrev.getContext('2d'), 'tomas', 0, 0, 72, 72);
-  }
-  const valeriaPrev = document.getElementById('previewValeriaCanvas');
-  if (valeriaPrev) {
-    SpriteManager.drawFullCharacter(valeriaPrev.getContext('2d'), 'valeria', 0, 0, 72, 72);
-  }
-
+window.addEventListener('DOMContentLoaded', () => {
+  // Inicializar de inmediato para que la portada y el botón "¡Comencemos!" respondan sin bloqueos
   game = new GameEngine();
   game.init();
 
-  const startBtn = document.getElementById('startGameBtn');
-  if (startBtn) {
-    startBtn.disabled = false;
-    startBtn.textContent = '¡INICIAR AVENTURA!';
-  }
+  const loadingStatus = document.getElementById('loadingStatus');
+  if (loadingStatus) loadingStatus.textContent = 'Cargando personajes y escenarios de San Miguel...';
+
+  // Cargar sprites en segundo plano sin bloquear la portada inicial
+  SpriteManager.loadAll((loaded, total) => {
+    if (loadingStatus) loadingStatus.textContent = `Cargando personajes y escenarios (${loaded}/${total})...`;
+  }).then(() => {
+    if (loadingStatus) loadingStatus.textContent = '¡Todo listo para rastrear!';
+
+    const tomasPrev = document.getElementById('previewTomasCanvas');
+    if (tomasPrev) {
+      SpriteManager.drawFullCharacter(tomasPrev.getContext('2d'), 'tomas', 0, 0, 72, 72);
+    }
+    const valeriaPrev = document.getElementById('previewValeriaCanvas');
+    if (valeriaPrev) {
+      SpriteManager.drawFullCharacter(valeriaPrev.getContext('2d'), 'valeria', 0, 0, 72, 72);
+    }
+
+    const startBtn = document.getElementById('startGameBtn');
+    if (startBtn) {
+      startBtn.disabled = false;
+      startBtn.textContent = '¡INICIAR AVENTURA!';
+    }
+  });
 });
