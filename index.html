@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Los Rastreadores de Leyendas de San Miguel - I.E.M.R. La Granja</title>
+  <!-- Google Fonts: Retro title font + Clean readable font for 3rd graders -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+
+  <!-- ==================== PANTALLA DE PORTADA INICIAL ==================== -->
+  <div id="coverScreen" class="cover-screen">
+    <div class="cover-stage">
+      <img src="sprites/Objetos/portada.jpeg" alt="Portada Los Rastreadores de Leyendas de San Miguel" class="cover-image">
+      <div class="cover-cta-overlay">
+        <button id="btnStartCover" class="cover-rpg-btn">¡Comencemos!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PANTALLA INICIAL (TÍTULO Y AVATAR) ==================== -->
+  <div id="titleScreen" class="screen-container hidden">
+    <div class="title-card">
+      <div class="school-header">
+        <span class="flag-icon">🇨🇴</span>
+        <span>I.E.M.R. LA GRANJA • SEDE SAN MIGUEL • ZIPAQUIRÁ</span>
+        <span class="flag-icon">🇨🇴</span>
+      </div>
+
+      <h1 class="main-title">LOS RASTREADORES<br><span class="subtitle-highlight">DE LEYENDAS</span><br><span class="place-highlight">DE SAN MIGUEL</span></h1>
+      
+      <p class="tagline">Una aventura de Comprensión Lectora y Pensamiento Computacional para 3.º de Primaria</p>
+
+      <div class="login-box">
+        <label for="studentNameInput" class="input-label">✍️ ¿Cuál es tu nombre, Rastreador(a)?</label>
+        <input type="text" id="studentNameInput" class="name-input" placeholder="Escribe tu nombre aquí..." maxlength="20" autocomplete="off">
+
+        <p class="avatar-title">Selecciona tu personaje:</p>
+        <div class="avatar-selector">
+          <div class="avatar-choice selected" data-avatar="tomas">
+            <div class="avatar-img-box">
+              <canvas id="previewTomasCanvas" width="72" height="72"></canvas>
+            </div>
+            <span class="avatar-name">Tomás</span>
+            <small class="avatar-desc">Observador de ruana y gorra</small>
+          </div>
+
+          <div class="avatar-choice" data-avatar="valeria">
+            <div class="avatar-img-box">
+              <canvas id="previewValeriaCanvas" width="72" height="72"></canvas>
+            </div>
+            <span class="avatar-name">Valeria</span>
+            <small class="avatar-desc">Curiosa de trenzas y mochila</small>
+          </div>
+        </div>
+
+        <div id="loadingStatus" class="loading-text">Cargando la vereda San Miguel...</div>
+
+        <button id="startGameBtn" class="retro-btn start-btn" disabled>
+          ¡INICIAR AVENTURA!
+        </button>
+      </div>
+
+      <div class="title-footer">
+        <span>🐕 Copo el perrito te acompañará en cada paso</span> • 
+        <span>🕹️ Usa las flechas, WASD o la pantalla táctil</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PANTALLA DE JUEGO PRINCIPAL ==================== -->
+  <div id="gameScreen" class="screen-container hidden">
+    
+    <!-- BARRA SUPERIOR (HUD) -->
+    <header id="gameHud" class="hud-bar">
+      <div class="hud-left">
+        <div class="player-hud-card">
+          <div class="avatar-circle">
+            <canvas id="hudPlayerAvatarCanvas" width="44" height="44"></canvas>
+          </div>
+          <div class="player-meta">
+            <span id="hudPlayerName" class="hud-name">Estudiante</span>
+            <span id="hudCurrentStageName" class="hud-sub">Escuela San Miguel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDALLAS GANADAS -->
+      <div class="hud-center">
+        <div class="badges-row">
+          <div class="badge-slot locked" id="badge_ojo_lince" title="Medalla Ojo de Lince (Nivel 1 - Literal + Descomponer)">
+            <span class="badge-icon">👁️</span>
+            <span class="badge-tooltip">Ojo de Lince</span>
+          </div>
+          <div class="badge-slot locked" id="badge_detective" title="Medalla del Detective (Nivel 2 - Inferencial + Patrones)">
+            <span class="badge-icon">🔍</span>
+            <span class="badge-tooltip">Detective</span>
+          </div>
+          <div class="badge-slot locked" id="badge_guardian_bosque" title="Medalla Guardián del Bosque (Nivel 3 - Crítico + Depuración)">
+            <span class="badge-icon">🌿</span>
+            <span class="badge-tooltip">Guardián</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES DE HERRAMIENTAS Y ACCESIBILIDAD -->
+      <div class="hud-right">
+        <button id="hudPowersBtn" class="hud-btn powers-btn" title="Ver mis 4 superpoderes">
+          ⚡ Mis Poderes
+        </button>
+        <button id="hudBookBtn" class="hud-btn book-btn" title="Abrir Libro de Leyendas">
+          📖 Leyendas
+        </button>
+        <button id="hudSoundBtn" class="hud-btn icon-btn" title="Activar/Desactivar Efectos">
+          🔊 Sonido
+        </button>
+        <button id="hudMusicBtn" class="hud-btn icon-btn" title="Activar/Desactivar Música">
+          🎵 Música
+        </button>
+        <button id="hudSpeechBtn" class="hud-btn icon-btn" title="Lectura en Voz Alta">
+          🗣️ Voz On
+        </button>
+      </div>
+    </header>
+
+    <!-- ÁREA DEL CANVAS DE JUEGO (768 x 640) -->
+    <main class="game-wrapper">
+      <div class="canvas-container">
+        <canvas id="gameCanvas" width="768" height="640"></canvas>
+
+        <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
+        <div id="gameToast" class="game-toast hidden"></div>
+
+        <!-- CUADRO DE DIÁLOGO ESTILO POKÉMON -->
+        <div id="dialogueBox" class="dialogue-box hidden">
+          <div class="dialogue-speaker-card">
+            <canvas id="dialogueSpeakerCanvas" width="44" height="44" class="speaker-canvas"></canvas>
+            <span id="dialogueSpeakerName" class="speaker-name">Abuelo Jacinto</span>
+          </div>
+
+          <div class="dialogue-body">
+            <p id="dialogueText" class="dialogue-content"></p>
+          </div>
+
+          <div class="dialogue-footer">
+            <button id="dialogueTtsBtn" class="tts-btn">
+              🔊 Escuchar lectura
+            </button>
+            <span class="dialogue-prompt">Toca aquí o pulsa [Espacio] ▶</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTROLES VIRTUALES TÁCTILES (MÓVILES / TABLETS) -->
+      <div class="touch-controls">
+        <div class="dpad-container">
+          <button class="dpad-btn up" data-dir="up">▲</button>
+          <div class="dpad-middle">
+            <button class="dpad-btn left" data-dir="left">◀</button>
+            <div class="dpad-center"></div>
+            <button class="dpad-btn right" data-dir="right">▶</button>
+          </div>
+          <button class="dpad-btn down" data-dir="down">▼</button>
+        </div>
+
+        <div class="action-btn-container">
+          <button id="actionBtn" class="action-round-btn">A<br><small>Hablar</small></button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ==================== MODAL "MIS PODERES" ==================== -->
+  <div id="powersModal" class="modal-overlay hidden">
+    <div class="powers-modal-content">
+      <header class="powers-header">
+        <h2>⚡ MIS 4 SUPERPODERES DE LECTURA Y PENSAMIENTO</h2>
+        <button id="btnClosePowers" class="close-btn" title="Cerrar">✖</button>
+      </header>
+
+      <div class="powers-intro">
+        <p>¡Con estos 4 superpoderes podrás entender cualquier historia y resolver los misterios de San Miguel!</p>
+        <button id="btnReadPowersAll" class="retro-btn secondary-btn small-btn">🔊 Escuchar todos los poderes</button>
+      </div>
+
+      <div class="powers-grid">
+        <!-- Poder 1 -->
+        <div class="power-card">
+          <div class="power-badge">🧩 PODER 1</div>
+          <h3>Descomponer (Partir en pedacitos)</h3>
+          <span class="power-sub">Lectura Literal</span>
+          <p class="power-text">"Cuando una historia parece muy larga, la partimos en pedacitos pequeños: ¿quién sale en el cuento?, ¿dónde pasa? y ¿qué hace? Así es súper fácil encontrar las respuestas que están escritas en la lectura."</p>
+          <button class="power-tts-btn" onclick="Speech.speak('Poder 1: Descomponer. Cuando una historia parece muy larga, la partimos en pedacitos pequeños: ¿quién sale en el cuento?, ¿dónde pasa? y ¿qué hace? Así es súper fácil encontrar las respuestas que están escritas en la lectura.')">🔊 Escuchar</button>
+        </div>
+
+        <!-- Poder 2 -->
+        <div class="power-card">
+          <div class="power-badge">🔍 PODER 2</div>
+          <h3>Buscar Patrones (Unir pistas)</h3>
+          <span class="power-sub">Lectura Inferencial</span>
+          <p class="power-text">"A veces el cuento no dice todo con palabras, pero deja pistas escondidas. Unimos las pistas que se repiten (como la cara de susto o una tormenta) para adivinar qué sienten los personajes o por qué pasa algo."</p>
+          <button class="power-tts-btn" onclick="Speech.speak('Poder 2: Buscar Patrones. A veces el cuento no dice todo con palabras, pero deja pistas escondidas. Unimos las pistas que se repiten para adivinar qué sienten los personajes o por qué pasa algo.')">🔊 Escuchar</button>
+        </div>
+
+        <!-- Poder 3 -->
+        <div class="power-card">
+          <div class="power-badge">🧹 PODER 3</div>
+          <h3>Limpiar Errores (Depuración)</h3>
+          <span class="power-sub">Lectura Crítica</span>
+          <p class="power-text">"Cuando leemos, a veces encontramos cosas que la gente dice sin tener pruebas o por puro miedo. Limpiar errores es quitar esas ideas falsas para quedarnos solo con lo que sí es verdad."</p>
+          <button class="power-tts-btn" onclick="Speech.speak('Poder 3: Limpiar Errores. Cuando leemos, a veces encontramos cosas que la gente dice sin tener pruebas o por puro miedo. Limpiar errores es quitar esas ideas falsas para quedarnos solo con lo que sí es verdad.')">🔊 Escuchar</button>
+        </div>
+
+        <!-- Poder 4 -->
+        <div class="power-card">
+          <div class="power-badge">💡 PODER 4</div>
+          <h3>Sacar la Idea Principal (Abstracción)</h3>
+          <span class="power-sub">Lectura Crítica</span>
+          <p class="power-text">"Después de quitar lo que sobra, nos quedamos con la enseñanza más importante de la historia y pensamos: ¿cómo nos ayuda esto a cuidar nuestra escuela, el agua y los bosques?"</p>
+          <button class="power-tts-btn" onclick="Speech.speak('Poder 4: Sacar la Idea Principal. Después de quitar lo que sobra, nos quedamos con la enseñanza más importante de la historia y pensamos: ¿cómo nos ayuda esto a cuidar nuestra escuela, el agua y los bosques?')">🔊 Escuchar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE ACTIVIDAD EDUCATIVA ==================== -->
+  <div id="activityModal" class="modal-overlay hidden">
+    <div class="activity-modal-content">
+      <header class="activity-header">
+        <h2 id="actTitle" class="activity-title">Misión Educativa</h2>
+        <span id="actDifficulty" class="activity-goal">Dificultad Fácil</span>
+      </header>
+      
+      <div id="actContent" class="activity-body">
+        <!-- Renderizado dinámicamente por GameEngine -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DEL LIBRO DE LEYENDAS Y SABERES ==================== -->
+  <div id="notebookModal" class="modal-overlay hidden">
+    <div class="notebook-content">
+      <header class="notebook-header">
+        <h2>📖 LIBRO DE LEYENDAS Y SABERES DE SAN MIGUEL</h2>
+        <button id="btnCloseNotebook" class="close-btn" title="Cerrar">✖</button>
+      </header>
+
+      <nav class="notebook-tabs">
+        <button class="notebook-tab active" data-pane="paneDiploma">🏆 Diploma de Honor</button>
+        <button class="notebook-tab" data-pane="paneC1">🥔 Leyenda 1: El Duende</button>
+        <button class="notebook-tab" data-pane="paneC2">🌊 Leyenda 2: El Mohán</button>
+        <button class="notebook-tab" data-pane="paneC3">🌿 Leyenda 3: Madremonte</button>
+      </nav>
+
+      <div class="notebook-panes">
+        <!-- PESTAÑA DIPLOMA -->
+        <div id="paneDiploma" class="notebook-pane active">
+          <div class="diploma-frame" id="printableDiploma">
+            <div class="diploma-border">
+              <div class="diploma-header">
+                <div class="school-seal">🇨🇴</div>
+                <div class="school-info">
+                  <h3>INSTITUCIÓN EDUCATIVA MUNICIPAL RURAL LA GRANJA</h3>
+                  <h4>SEDE SAN MIGUEL • ZIPAQUIRÁ, CUNDINAMARCA</h4>
+                  <p>Grado 3.º de Primaria • Comprensión Lectora & Pensamiento Computacional</p>
+                </div>
+                <div class="school-seal">🏅</div>
+              </div>
+
+              <div class="diploma-title-box">
+                <h2>DIPLOMA DE HONOR</h2>
+                <h3>RASTREADOR(A) OFICIAL DE LEYENDAS Y SABERES</h3>
+              </div>
+
+              <div class="diploma-body">
+                <p class="dip-intro">Se certifica con alegría que el/la estudiante:</p>
+                <div class="dip-student-name" id="diplomaStudentName">Nombre del Estudiante</div>
+                <p class="dip-text">
+                  Ha explorado con éxito las 3 leyendas colombianas aplicando sus 4 superpoderes:
+                  <strong>Descomponer, Buscar Patrones, Limpiar Errores y Sacar la Idea Principal</strong>.
+                </p>
+              </div>
+
+              <div class="diploma-badges-grid">
+                <div class="dip-badge-card" id="dipBadge_ojo_lince">
+                  <span class="d-icon">👁️</span>
+                  <strong>Ojo de Lince</strong>
+                  <small>Lectura Literal</small>
+                </div>
+                <div class="dip-badge-card" id="dipBadge_detective">
+                  <span class="d-icon">🔍</span>
+                  <strong>Detective</strong>
+                  <small>Lectura Inferencial</small>
+                </div>
+                <div class="dip-badge-card" id="dipBadge_guardian_bosque">
+                  <span class="d-icon">🌿</span>
+                  <strong>Guardián</strong>
+                  <small>Lectura Crítica</small>
+                </div>
+              </div>
+
+              <div class="diploma-footer">
+                <div class="signature-box">
+                  <div class="signature-line"></div>
+                  <strong>Abuelo Jacinto</strong>
+                  <small>Sabedor Campesino</small>
+                </div>
+                <div class="diploma-date-box">
+                  <span id="diplomaDate">Zipaquirá, 2026</span>
+                  <div class="official-stamp">VERIFICADO<br>LA GRANJA</div>
+                </div>
+                <div class="signature-box">
+                  <div class="signature-line"></div>
+                  <strong>Profesora Lucía</strong>
+                  <small>Docente de Aula</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diploma-actions">
+            <button id="btnPrintDiploma" class="retro-btn primary-btn large-btn">
+              🖨️ IMPRIMIR / GUARDAR DIPLOMA (PDF)
+            </button>
+          </div>
+        </div>
+
+        <!-- PESTAÑA LEYENDA 1 -->
+        <div id="paneC1" class="notebook-pane">
+          <div class="chronicle-card">
+            <h3>🥔 Leyenda 1: El Duende travieso de las fincas</h3>
+            <div class="chronicle-badge-tag">Medalla Ojo de Lince 👁️ • Lectura Literal + Descomponer</div>
+            <div class="chronicle-item">
+              <strong>Lo que aprendimos:</strong>
+              <p>El Duende vive cerca de ríos y barrancos, lleva un sombrero gigante y carga una guitarra chiquita. Esconde palas y mueve ollas, pero los abuelos lo calman dejándole una guitarra afinada junto a la puerta.</p>
+            </div>
+            <div class="chronicle-item learning">
+              <strong>Superpoder Aplicado (Descomponer):</strong>
+              <p>Dividir el cuento en 4 preguntas cortas nos permitió encontrar fácilmente las respuestas que estaban escritas palabra por palabra.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA LEYENDA 2 -->
+        <div id="paneC2" class="notebook-pane">
+          <div class="chronicle-card">
+            <h3>🌊 Leyenda 2: El Mohán y el secreto del río</h3>
+            <div class="chronicle-badge-tag">Medalla del Detective 🔍 • Lectura Inferencial + Buscar Patrones</div>
+            <div class="chronicle-item">
+              <strong>Lo que aprendimos:</strong>
+              <p>El Mohán cuida el río y le gusta la paz. Cuando los hombres botaron basura y atraparon pececitos chiquitos, el río rugió con remolinos oscuros y los hombres huyeron temblando de miedo.</p>
+            </div>
+            <div class="chronicle-item learning">
+              <strong>Superpoder Aplicado (Buscar Patrones):</strong>
+              <p>Juntamos las pistas que se repiten para descubrir que el Mohán se enojó por la contaminación y que los hombres sintieron mucho miedo.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA LEYENDA 3 -->
+        <div id="paneC3" class="notebook-pane">
+          <div class="chronicle-card">
+            <h3>🌿 Leyenda 3: La Madremonte, protectora de los bosques</h3>
+            <div class="chronicle-badge-tag">Medalla Guardián del Bosque 🌿 • Lectura Crítica + Limpiar Errores</div>
+            <div class="chronicle-item">
+              <strong>Lo que aprendimos:</strong>
+              <p>La Madremonte camina entre los árboles cuidando el agua limpia. Limpiamos las ideas falsas de cortar los árboles y entendimos que los bosques y páramos guardan el agua de lluvia como esponjas gigantes.</p>
+            </div>
+            <div class="chronicle-item learning">
+              <strong>Superpoderes Aplicados (Limpiar Errores y Sacar la Idea Principal):</strong>
+              <p>Eliminamos los errores y nos quedamos con la gran enseñanza: cuidar las quebradas, amar los árboles y contarles esta lección a nuestros vecinos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE CELEBRACIÓN DE VICTORIA ==================== -->
+  <div id="victoryModal" class="modal-overlay hidden">
+    <div class="victory-card">
+      <div class="victory-confetti-header">🎉 ¡GRAN FIESTA EN SAN MIGUEL! 🎉</div>
+      
+      <h2>¡FELICITACIONES, <span id="victoryStudentName">Rastreador</span>!</h2>
+      
+      <p class="victory-message">
+        Has completado las 3 leyendas colombianas y ganado tus <strong>3 Medallas de Honor</strong>:
+        Ojo de Lince, Detective y Guardián del Bosque.
+        ¡Demostraste que con tus 4 superpoderes puedes entender cualquier historia y proteger tu vereda!
+      </p>
+
+      <div class="victory-characters-cheer">
+        <div class="cheer-npc">
+          <canvas id="cheerCanvas_jacinto" width="56" height="56" class="cheer-avatar-canvas"></canvas>
+          <span>Jacinto</span>
+        </div>
+        <div class="cheer-npc">
+          <canvas id="cheerCanvas_copo" width="56" height="56" class="cheer-avatar-canvas"></canvas>
+          <span>¡Copo! 🐾</span>
+        </div>
+        <div class="cheer-npc">
+          <canvas id="cheerCanvas_rigoberto" width="56" height="56" class="cheer-avatar-canvas"></canvas>
+          <span>Rigoberto</span>
+        </div>
+        <div class="cheer-npc">
+          <canvas id="cheerCanvas_lucia" width="56" height="56" class="cheer-avatar-canvas"></canvas>
+          <span>Prof. Lucía</span>
+        </div>
+      </div>
+
+      <div class="victory-actions">
+        <button id="btnOpenBookFromVictory" class="retro-btn primary-btn large-btn">
+          🏆 VER MI LIBRO DE LEYENDAS Y DIPLOMA
+        </button>
+        <button id="btnPlayAgain" class="retro-btn secondary-btn large-btn" style="margin-top: 10px;">
+          🔄 JUGAR OTRA VEZ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS DEL JUEGO -->
+  <script src="js/audio.js?v=11"></script>
+  <script src="js/speech.js?v=11"></script>
+  <script src="js/sprites.js?v=11"></script>
+  <script src="js/map.js?v=11"></script>
+  <script src="js/dialogues.js?v=11"></script>
+  <script src="js/game.js?v=11"></script>
+</body>
+</html>
